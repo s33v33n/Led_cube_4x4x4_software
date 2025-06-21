@@ -3,25 +3,25 @@
 
 
 void columns_turn_on(void){
-    PORTB &= ~_BV(LATCH); // close latch 
-    PORTB &= ~_BV(RESET); // reset register set to LOW 
-    PORTB |= _BV(RESET); // reset register set to HIGH --> all registers(Qa-Qh) set to LOW --> all columns give light 
-    PORTB |= _BV(LATCH); // open latch 
-    PORTB &= ~_BV(LATCH); // close latch
-  }
+  PORTB &= ~_BV(LATCH); // close latch 
+  PORTB &= ~_BV(RESET); // reset register set to LOW 
+  PORTB |= _BV(RESET); // reset register set to HIGH --> all registers(Qa-Qh) set to LOW --> all columns give light 
+  PORTB |= _BV(LATCH); // open latch 
+  PORTB &= ~_BV(LATCH); // close latch
+}
   
 void columns_turn_off(void){
-    PORTB &= ~_BV(LATCH); // close latch
-    PORTD |= _BV(SER); // SER --> HIGH.
+  PORTB &= ~_BV(LATCH); // close latch
+  PORTD |= _BV(SER); // SER --> HIGH.
 
-    for(int i=0; i < 16; i++){
-        PORTD &= ~_BV(CLK); // clk low    *rising edge*
-        PORTD |= _BV(CLK);  // clk high 
-    }
+  for(int i=0; i < 16; i++){
+    PORTD &= ~_BV(CLK); // clk low    *rising edge*
+    PORTD |= _BV(CLK);  // clk high 
+  }
 
-    PORTD &= ~_BV(SER); // SER --> LOW.
-    PORTB |= _BV(LATCH); // open latch 
-    PORTB &= ~_BV(LATCH); // close latch
+  PORTD &= ~_BV(SER); // SER --> LOW.
+  PORTB |= _BV(LATCH); // open latch 
+  PORTB &= ~_BV(LATCH); // close latch
 }
 
 
@@ -164,12 +164,12 @@ void turn_one_led (uint8_t column){
       PORTD &= ~_BV(CLK); // rising edge 
       PORTD |= _BV(CLK);
       PORTD |= _BV(SER); // SER -> HIGH
-      Serial.println("HIGH: " + String(i));
+      //Serial.println("HIGH: " + String(i));
     }
     else{
       PORTD &= ~_BV(CLK); // rising edge 
       PORTD |= _BV(CLK);
-      Serial.println("LOW: " + String(i));
+      //Serial.println("LOW: " + String(i));
     }
   } 
   PORTB &= ~_BV(LATCH); // latch results for each column 
@@ -179,7 +179,7 @@ void turn_one_led (uint8_t column){
 
   write_next_layer(layer);
 
-  Serial.println("Layer: " + String(layer) + "  Column: " + String(column)); 
+  //Serial.println("Layer: " + String(layer) + "  Column: " + String(column)); 
 }
 
 

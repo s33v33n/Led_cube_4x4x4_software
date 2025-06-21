@@ -32,7 +32,12 @@ void setup()
   
   runner.startNow();
 
-  //runner.addTask(E0);
+  runner.addTask(E0);
+  runner.addTask(E1);
+  runner.addTask(E2);
+  runner.addTask(E3);
+
+
   E3.enable();
 }
 
