@@ -21,6 +21,5 @@ extern uint8_t Columns; // count from 0 --> 0-15 (16)
 extern uint8_t Layers;// count from 0 --> 0-3 (4)
 
 
-
 ///// TASKS /////
 extern bool E_flags[];
