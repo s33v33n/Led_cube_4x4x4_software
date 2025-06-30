@@ -69,7 +69,7 @@ TCCR0A &= ~(1 << COM0B0);  // 0  control OC2B pin behaviour -> non-inverting mod
 TCCR0A |=  (1 << COM0B1);  // 1 
 
 OCR0A = 0;   // D6 - SmallGreenDiode
-OCR0B = 0;   // D5 - SmallYellowDiode
+OCR0B = 64;   // D5 - SmallYellowDiode
 
 }
 
@@ -86,7 +86,7 @@ TCCR1B &= ~(1 << CS11);      //  0      16 MHz
 TCCR1B &= ~(1 << CS12);      //  0      Period is  1/16 MHz
 
 // 2. Counting mode 
-TCCR1A &= ~(1 << WGM10); // 0       0000 - Normal operation mode TOP - 0xFF , set TOV Flag on MAX (0xFF). OCR0A and OCR0B are disabled
+TCCR1A &= ~(1 << WGM10); // 0       0000 - Normal operation mode TOP - 0xFFFF , set TOV Flag on MAX (0xFFFF). OCR0A and OCR0B are disabled
 TCCR1A &= ~(1 << WGM11); // 0
 TCCR1B &= ~(1 << WGM12); // 0
 TCCR1B &= ~(1 << WGM13); // 0
@@ -126,8 +126,8 @@ TCCR2A |=  (1 << COM2B1);  // 1
 // TIMSK2 |= (1 << OCIE2B); 
 // TIMSK2 |= (1 << OCIE2A);
 
-OCR2A = 0;   // D11 - BigGreenDiode
-OCR2B = 0;   // D3  - SmallRedDiode
+OCR2A = 128;   // D11 - BigGreenDiode
+OCR2B = 192;   // D3  - SmallRedDiode
 
 }
 
