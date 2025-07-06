@@ -48,7 +48,7 @@ ISR(PCINT2_vect){
         }
     }
 
-    if(PIND & ~(1 << PIND7)){ // falling egde 
+    else{ // falling egde 
         falling_edge_start_time = TCNT1;
         falling_edge_flag = true;
 
@@ -117,9 +117,13 @@ void loop(){
 
         start_sequence_2_flag = 0;
 
+        PORTD  &=  ~(1 << DDD7); // digital 7 LOW 
+
         // pin D7 as input 
         DDRD  &=  ~(1 << DDD7); // digital 7 as input 
 
+        only_one_first_rising_edge_flag = true; 
+        
         // enable interrupt 
         PCICR  |= (1 << PCIF2);     // enable interrupt for group where is pin D7 
         PCMSK2 |= (1 << PCINT23);   // enable interrupt for pin D7
@@ -128,24 +132,39 @@ void loop(){
 
         Serial.print(last_time_stamp);
         Serial.println(" = last_time_stamp");
-
-        only_one_first_rising_edge_flag = true; 
     }
 
 
     if(only_one_first_rising_edge_flag && first_rising_edge_interrupt_flag){ // rising edge - first rising egde 
 
+        only_one_first_rising_edge_flag = false;
+        first_rising_edge_interrupt_flag = false;
+        
+        Serial.println("In the first rising edge, can calculate the LOW time state");
+        
         if (65535 - rising_edge_start_time > 1440){
             offset = 0;
         }
         else{
             offset = 65535 - rising_edge_start_time;
         }
+        
+        Serial.print(offset);
+        Serial.println(" = offset");
+
+        Serial.print(last_time_stamp);
+        Serial.println(" = last_time_stamp");
+
+        Serial.print(rising_edge_start_time);
+        Serial.println(" = rising_edge_start_time");
+
+        Serial.print((last_time_stamp - rising_edge_start_time + offset));
+        Serial.println(" = last_time_stamp - rising_edge_start_time + offset");
 
         // first timestamp ~ 80 us test low signal from dht11
         // period is 62.5 ns. 80us / 62.5 ns = 1280. ; 1120 = 70us ; 1440 = 90 us ;  
 
-        if(1120 < (start_time - rising_edge_start_time + offset) && (start_time - rising_edge_start_time + offset) < 1440){
+        if(1120 < (last_time_stamp - rising_edge_start_time + offset) && (last_time_stamp - rising_edge_start_time + offset) < 1440){
             Serial.println("DHT11 OK - first LOW signal success");
         }
         else{
@@ -153,9 +172,6 @@ void loop(){
         }
 
         last_time_stamp = rising_edge_start_time;
-
-        only_one_first_rising_edge_flag = false;
-        first_rising_edge_interrupt_flag = false;
 
         first_falling_edge_flag = true;
     }
@@ -210,10 +226,5 @@ void loop(){
         last_time_stamp = falling_edge_start_time;
 
     }
-
-    // Serial.print(start_sequence_1_flag);
-    // Serial.print(" = start_sequence_1_flag, ");
-    // Serial.print(TOV1);
-    // Serial.println(" = TOV1");
  
 }

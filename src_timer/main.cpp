@@ -11,7 +11,7 @@ In register TIMSK0 set bits OCIE0B and OCIE0A to enable output compare mode inte
 */
 
 #include <Arduino.h>
-#include <pwm_setup.h>
+#include "pwm_setup.h"
 
 volatile uint8_t value_A = 0;
 volatile uint8_t value_B = 0;
