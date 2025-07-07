@@ -56,14 +56,7 @@ value_A++;
   if (value_A == 10){
     value_A = 0;
     OCR0A++;
-    OCR2A++;
-
-    // if(OCR2A == 255){
-    //   OCR0A = 0;
-    //   OCR2A = 0;
-    //   //PORTD ^= 0x20;
-    // }
-    
+    OCR2A++;    
   }
 }
 
@@ -74,43 +67,6 @@ value_B++;
     value_B = 0;
     OCR0B++;
     OCR2B++;
-    
-    // if (OCR2B == 255){
-    //   OCR0B = 0;
-    //   OCR2B = 0;
-    //   //PORTD ^= 0x40;
-    // }
   }
-
 }
 
-
-
-// ISR(TIMER0_COMPA_vect){ // ISR period is 16 ms  
-
-// value_A++;
-//   if (value_A == 10){
-//     value_A = 0;
-//     OCR2B++;
-//     if(OCR2B == 255){
-//       OCR2B = 0;
-//       PORTD ^= 0x20;
-//     }
-    
-//   }
-// }
-
-// ISR(TIMER0_COMPB_vect){
-
-// value_B++;
-
-//   if (value_B == 10){
-//     OCR2A++;
-//     value_B = 0;
-//     if (OCR2A == 255){
-//       PORTD ^= 0x40;
-//       OCR2A = 0;
-//     }
-//   }
-
-// }

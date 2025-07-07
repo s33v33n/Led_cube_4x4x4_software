@@ -2,6 +2,7 @@
 
 #include <Arduino.h>
 
+void led_cube_pins_setup(void);
 void initial_effect(void);
 
 void columns_turn_off(void); // Turn off all columns -> write state HIGH 

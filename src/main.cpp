@@ -2,33 +2,32 @@
 #include "effects.h"
 #include "pins.h"
 #include "functions.h"
+#include "timers_setup.h"
 
 #include <IRremote.hpp>
 #include <TaskScheduler.h>
 
+//// ISRs ////
+volatile uint8_t value_A = 0;
+volatile uint8_t value_B = 0;
 
 //// TaskScheduler ////
 Scheduler runner;
 
 Task E0(1000, TASK_FOREVER, &effect0_scope::effect0, &runner, false);
 Task E1(250, TASK_FOREVER, &effect1_scope::effect1, &runner, false);
-Task E2(250, TASK_FOREVER,&effect2_scope::effect2, &runner, false);
+Task E2(250, TASK_FOREVER, &effect2_scope::effect2, &runner, false);
 Task E3(2000, TASK_FOREVER, &effect3_scope::effect3, &runner, false);
+Task E4(1000, TASK_ONCE, &effect4_scope::effect4, &runner, false);
   
 void setup()
 {
-  // PORT B 
-  DDRB = _BV(layer1) | _BV(LATCH) | _BV(layer3) | _BV(layer4) | _BV(RESET); // 4 - layer1 , 3 - LATCH , 2 - layer3 , 1 - layer4 , 0 - RESET 
-  PORTB = _BV(layer1) | _BV(layer3) | _BV(layer4) | _BV(RESET);// 1 - layer1 , 0 - LATCH , 1 - layer3 , 1 - layer4 , 1 - RESET
-  
-  //PORT D
-  DDRD = _BV(SER) | _BV(layer2) | _BV(CLK); //  7 - SER , 6 - layer2 , 4 - CLK , 2 - IR_input
-  PORTD = _BV(layer2); // 0 - SER , 1 - layer2 , 0 - CLK , pull up resistor disable - IR_input
+  led_cube_pins_setup();
 
-  Serial.begin(9600);
+  Serial.begin(115200);
   while (!Serial); // wait untill Serial is ready 
   
-  initial_effect(); // Initial effect - 3 times turn on and off 
+  //initial_effect(); // Initial effect - 3 times turn on and off 
   
   runner.startNow();
 
@@ -36,9 +35,29 @@ void setup()
   runner.addTask(E1);
   runner.addTask(E2);
   runner.addTask(E3);
+  runner.addTask(E4);
 
+  //======== temporary initial effect
+  all_layers_low();
+  delay(1000);
+  
+  for(uint8_t i = 0; i < 4; i++){
+    write_next_layer(i);
+    delay(1000);
+  }
+  //========
 
-  E3.enable();
+  timer1_setup(); // setup timer1 (16-bit timer
+  
+  // timer0_pwm_off();
+  // timer2_pwm_off();
+  // timer1_turn_off_ISR();
+  // E4.enable();
+  
+  timer1_turn_on_ISR();
+  timer2_pwm_on();
+  timer0_pwm_on();
+
 }
 
 void loop(){ 
@@ -47,3 +66,22 @@ void loop(){
 
 }
 
+ISR(TIMER1_COMPA_vect){ // ISR period is 16 ms  
+
+value_A++;
+  if (value_A == 10){
+    value_A = 0;
+    OCR0A++;
+    OCR2A++;    
+  }
+}
+
+ISR(TIMER1_COMPB_vect){
+
+value_B++;
+  if (value_B == 10){
+    value_B = 0;
+    OCR0B++;
+    OCR2B++;
+  }
+}

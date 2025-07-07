@@ -15,36 +15,6 @@ PORTD = _BV(Small_Green_diode) | _BV(Small_Red_diode) | _BV(Small_Yellow_diode);
 }
 
 
-/*
-Normal PWM mode - timer 0 (8-bit)
-
-only counting up 0x00 - 0xFF
-Interrupt flag on 0xFF
-*/  
-
-// void timer0_setup(void){
-
-// // 0. Reset registers 
-// TCCR0B = 0;
-// TCCR0A = 0;
-// TIMSK0 = 0;
-
-// // 1. Enable clock
-// TCCR0B |=  (1 << CS00);      //  1      101 - enable internal clock, prescaler = 1024  
-// TCCR0B &= ~(1 << CS01);      //  0      16 MHz / 1024 = 15625 Hz -> (1/15625) * 255 = 16 ms 
-// TCCR0B |=  (1 << CS02);      //  1      ISR is generated every 16 ms 
-
-// // 2. Counting mode 
-// TCCR0A &= ~(1 << WGM00); // 0       000 - Normal operation mode TOP - 0xFF , set TOV Flag on MAX (0xFF). OCR0A and OCR0B are disabled
-// TCCR0A &= ~(1 << WGM01); // 0
-// TCCR0B &= ~(1 << WGM02); // 0
-
-// // 3. Enable interrupt on compare match 
-// TIMSK0 |= (1 << OCIE0B); 
-// TIMSK0 |= (1 << OCIE0A);
-
-// }
-
 void timer0_setup(void){    // Fast PWM 
 
 // 0. Reset registers 
@@ -70,7 +40,6 @@ TCCR0A |=  (1 << COM0B1);  // 1
 
 OCR0A = 0;   // D6 - SmallGreenDiode
 OCR0B = 64;   // D5 - SmallYellowDiode
-
 }
 
 void timer1_setup(void){
@@ -94,7 +63,6 @@ TCCR1B &= ~(1 << WGM13); // 0
 // 3. Enable interrupt on compare match 
 TIMSK1 |= (1 << OCIE1B); 
 TIMSK1 |= (1 << OCIE1A);
-
 }
 
 
@@ -122,13 +90,8 @@ TCCR2A |=  (1 << COM2A1);  // 1
 TCCR2A &= ~(1 << COM2B0);  // 0  control OC2B pin behaviour -> non-inverting mode, change on OCR2B
 TCCR2A |=  (1 << COM2B1);  // 1 
 
-// 3. Enable interrupt on compare match 
-// TIMSK2 |= (1 << OCIE2B); 
-// TIMSK2 |= (1 << OCIE2A);
-
 OCR2A = 128;   // D11 - BigGreenDiode
 OCR2B = 192;   // D3  - SmallRedDiode
-
 }
 
 
