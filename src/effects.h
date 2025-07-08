@@ -23,3 +23,8 @@ namespace effect4_scope {   // EFFECT 4 - turning on layers by PWM in different 
   
     void effect4(void);
 }
+
+namespace effect5_scope {   // EFFECT 5- turning all layers by PWM in the same phase and double siede up-down-up...   
+  
+    void effect5(void);
+}

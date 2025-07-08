@@ -9,6 +9,7 @@ void columns_turn_off(void); // Turn off all columns -> write state HIGH
 void columns_turn_on(void); // Turn on all columns -> write state LOW (GND)
 
 void all_layers_low(void);  // Turn off all layers 
+void all_layers_high(void);  // Turn on all layers 
 
 namespace random_numbers_generator {
 

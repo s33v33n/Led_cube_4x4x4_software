@@ -27,7 +27,11 @@
 
 
 
-// 
+// II) IR sensor 
+
+///// REGISTER B /////
+#define IR_RECEIVER 5    // Digital pin 13 = Port B bit 5
+
 
 
 ///// VARIABLES /////

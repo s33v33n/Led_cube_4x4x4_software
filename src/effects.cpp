@@ -7,22 +7,20 @@ namespace effect0_scope { // Random turn on all columns
 
   uint8_t columns_turn_on = 0;
   uint8_t *random_numbers = random_numbers_generator::return_random_numbers_0_15();
-  bool random_falg = true;
+  bool random_flag = true;
 
   void effect0(void){
-
-    timer0_pwm_off();
-    timer2_pwm_off();
-
+    
+    all_layers_high();
     if(columns_turn_on > Columns + 1){
       delete [] random_numbers;
       random_numbers = random_numbers_generator::return_random_numbers_0_15();
       columns_turn_on = 0;    
     }
 
-    writing_cols_states::write_selected_cols_states(random_numbers, columns_turn_on, random_falg);
+    writing_cols_states::write_selected_cols_states(random_numbers, columns_turn_on, random_flag);
     columns_turn_on++;
-    //Serial.println("Number " + String(columns_turn_on) + ":" + String(random_numbers[columns_turn_on]));
+    Serial.println("Number " + String(columns_turn_on) + ":" + String(random_numbers[columns_turn_on]));
   }
 }
 
@@ -98,13 +96,35 @@ namespace effect3_scope { // turn on leds one by one
   }
 }
 
-namespace effect4_scope {
+namespace effect4_scope { // slow turning on layers 
 
   void effect4(void){
-    
-    timer1_turn_on_ISR();
+
+    OCR2B = 0;      // D3  - LAYER_1
+    OCR0B = 64;     // D5  - LAYER_2
+    OCR0A = 128;    // D6  - LAYER_3
+    OCR2A = 192;    // D11 - LAYER_4
+
     timer0_pwm_on();
     timer2_pwm_on();
+
+    timer0_ISR_effect4_on();
+  }
+}
+
+namespace effect5_scope { // slow turning on layers 
+
+  void effect5(void){
+
+    OCR2B = 0;      // D3  - LAYER_1
+    OCR0B = 0;     // D5  - LAYER_2
+    OCR0A = 0;    // D6  - LAYER_3
+    OCR2A = 0;    // D11 - LAYER_4
+
+    timer0_pwm_on();
+    timer2_pwm_on();
+
+    timer2_ISR_effect5_on();
   }
 }
   

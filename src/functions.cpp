@@ -121,12 +121,19 @@ namespace writing_cols_states{
     
 }
   
+
 void all_layers_low(void){
-    PORTD &= ~_BV(LAYER_1) & ~_BV(LAYER_2) & ~_BV(LAYER_3);
-    PORTB &= ~_BV(LAYER_4);
+  PORTD &= ~_BV(LAYER_1) & ~_BV(LAYER_2) & ~_BV(LAYER_3);
+  PORTB &= ~_BV(LAYER_4);
+}
+
+
+void all_layers_high(void){
+  PORTD |= _BV(LAYER_1) | _BV(LAYER_2) | _BV(LAYER_3);
+  PORTB |= _BV(LAYER_4);
 }
   
- 
+
 void write_next_layer(uint8_t next){
   
     switch(next){
