@@ -52,7 +52,7 @@ void setup()
   }
   //========
 
-  // E4.enable();
+  E1.enable();
 
   // OR 
   
@@ -87,11 +87,103 @@ ISR(TIMER2_OVF_vect){ // efect 5
       factor_effect_5 = factor_effect_5 * (-1);
     }
 
-    value_effect_5 = 0;
     OCR0B += factor_effect_5;
     OCR0A += factor_effect_5; 
     OCR2B += factor_effect_5;
     OCR2A += factor_effect_5;   
+
+    value_effect_5 = 0;
   }
 }
 
+// #include <Arduino.h>
+// #include "effects.h"
+// #include "pins.h"
+// #include "functions.h"
+// #include "timers_setup.h"
+
+
+
+// enum class Effect : uint8_t{
+
+//   None,
+//   Effect_0,
+//   Effect_1,
+//   Effect_2,
+//   Effect_3
+
+// };
+
+// Effect current_effect = Effect::Effect_0;
+
+// struct Task
+// {
+//   uint16_t interval;
+//   void (*function)();
+// };
+
+// Task tasks[] = {
+
+//   {1000, effect0_scope::effect0},
+//   {250, effect1_scope::effect1},
+//   {250, effect2_scope::effect2},
+//   {2000, effect3_scope::effect3}
+// };
+
+
+// void setup(){
+
+//   led_cube_pins_setup();
+
+//   all_layers_low();
+//   delay(750);
+  
+//   for(uint8_t i = 0; i < 4; i++){
+//     write_next_layer(i);
+//     delay(750);
+//   }
+
+//   Serial.begin(115200);
+//   while(!Serial);
+//   Serial.println("Serial ready\n");
+
+// }
+
+
+// char c;
+
+// void handleCODE(){
+
+//   if (Serial.available() > 0) {
+//       c = Serial.read();
+//   }
+
+
+//   switch(c){
+//     case 'a': current_effect = Effect::Effect_0; break;
+//     case 'b': current_effect = Effect::Effect_1; break;
+//     case 'c': current_effect = Effect::Effect_2; break;
+//     case 'd': current_effect = Effect::Effect_3; break;
+//   }
+
+// }
+
+
+
+
+// void loop(){
+
+//   //handleCODE();
+
+//   uint32_t last_time = 0;
+
+//   Task &task = tasks[static_cast<uint8_t>(current_effect)];
+
+//   if(millis() - last_time > task.interval){
+
+//     task.function();
+//     last_time = millis();
+//   }
+
+
+// }
