@@ -1,6 +1,6 @@
 #include <Arduino.h>
 
-/* Numbers are reffering to bit numbers in register, not to arduino pin numbers */
+/* Numbers are reffering to the bit numbers in register, not to arduino pin numbers */
 
 // I) LED_CUBE 
 
