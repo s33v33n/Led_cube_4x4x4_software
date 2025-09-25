@@ -1,0 +1,23 @@
+
+HOW fdev_setup_stream works:
+
+
+
+printf("Hello\n")                   (standart output stream)
+      │
+      ▼
+   stdout -> FILE uart_output       (get data to struct FILE)
+      │
+      ▼
+fdev_setup_stream:
+  - put = uart_putchar              ( function for output)
+  - get = NULL                      (no function for reading)
+  - flags = _FDEV_SETUP_WRITE       (only writing flag)
+      │
+      ▼
+uart_putchar('H') -> Serial.write('H') -> UART -> Terminal
+
+
+
+
+stdout = &uart_output (connect standart output with my struct FILE)
