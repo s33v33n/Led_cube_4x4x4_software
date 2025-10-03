@@ -2,61 +2,15 @@
 #include <stdio.h>
 #include "IR_functions.h"
 
-#define MAX_IR_SIGNALS 33 // first 13,5 ms burst + 32 bits
-#define WRONG_DECODED -1 
-
-
 volatile uint16_t IR_signal_width = 0;
 volatile uint16_t last_timer1 = 0;
-volatile uint16_t IR_signals_counter = 0;
 
-volatile bool first_edge = true;
-
-typedef enum{
-
-    // Due to the AVR timers limits, recorded time differs from pulses time in NEC protocol, repeating code is not used (not required + save memory) 
-
-    PULSE_SHORT,        // logic 0 
-    PULSE_LONG,         // logic 1
-    PULSE_13MS,         // first in sequence (9 + 4,5 ms) 
-    PULSE_ERROR,        // error while receiving 
-
-    //PULSE_11MS,         // repeat code 
-}pulse_t;
-
-volatile pulse_t IR_signals_values[MAX_IR_SIGNALS];
-
-int decode_IR_signals(volatile pulse_t *IR_signals_values);
-
-
-pulse_t pulse_command(uint16_t time){
-
-    if( 870 <= time && time <= 1370){
-        return PULSE_SHORT;
-    }
-    else if(2000 <= time && time <= 2500){
-        return PULSE_LONG;
-    }
-    else if(13250 <= time && time <= 13750){
-        return PULSE_13MS;
-    }
-    else{
-        return PULSE_ERROR;
-    }
-}
-
-
-int uart_putchar(char c, FILE* f) { // ** get the chars and send them to printf , FILE* f is useless function fdev_setup_streem needs it **
-    if (c == '\n') {
-        Serial.write('\r');     // return to the beginning of the line -> CR carrige return  
-    }                           // go to the next line -> LF line feed 
-                                // ** first computers were made just like a writing machines, needed to do carrige return + get new line **  
-    
-    Serial.write(c);            // send the char     
-    return 0;
-}
+volatile uint32_t received_bits = 0;
+volatile uint32_t received_value = 0;
 
 FILE uart_output = {0};         // clear the FILE struct at the beginning. This struct will be used for data stream
+
+void print_received_value_in_binary(uint32_t);
 
 void setup() {
     configure_timer1_for_IR_signal_measurement();
@@ -75,80 +29,27 @@ void setup() {
 
 void loop() {
 
-    if(IR_signals_counter == MAX_IR_SIGNALS){
+    if(received_bits == 32){
 
         // 1. disable interrputs
         TIMSK1 &= ~_BV(ICIE1);
+
+        // 2. Calculate command 
+        print_received_value_in_binary(received_value);
+
+        uint8_t command = received_value >> 16;         // command 
+        uint8_t neg_command = received_value >> 24;     // negative command 
+
+        if(command == (uint8_t)(~neg_command)){
+            printf("Correct command = !neg_command -> %u , %u\n" , command , neg_command);
+        }
+	    received_bits = 0;
         
-        // 2. calculate signals 
-        int received_command = decode_IR_signals(IR_signals_values);
-
-        for(int i=0; i < MAX_IR_SIGNALS; i++){
-            printf("%d signal: %d\n", i, IR_signals_values[i]);
-        }
-
-        if(received_command > 0 ){
-            first_edge = true;
-            IR_signals_counter = 0;
-            printf("received_command: %d\n", received_command);
-
-        }
-        else{
-
-            printf("received_command: %d\n", received_command);
-        }
-
-
         // 3. enable interrupts 
         TIMSK1 |= _BV(ICIE1);
 
-        while (1)
-        {
-            /* code */
-        }
-        
-
+        printf("command: %u \n" , command);
     }
-}
-
-int decode_IR_signals(volatile pulse_t *IR_signals_values){
-
-    uint16_t decoded = 0;
-    
-    if(IR_signals_values[0] == PULSE_13MS){
-
-        for(int i = 17; i < MAX_IR_SIGNALS; i++){
-            if(IR_signals_values[i] == PULSE_SHORT){
-                decoded = (0 >> decoded);
-            }
-            else if (IR_signals_values[i] == PULSE_LONG){
-                decoded = (1 >> decoded);
-            }
-            else{
-                return WRONG_DECODED;
-            }
-
-            printf("Decoded: %d\n", decoded);
-        }
-
-        uint8_t command = decoded | 0xFF;
-        uint8_t negative_command = (decoded >> 8) | 0xFF;
-
-        printf("command: %u , neg_command: %u\n", command, negative_command);
-
-        if(command == (uint8_t)(~negative_command)){
-            return command;
-        }
-        else{
-            return WRONG_DECODED;
-        }
-
-    }
-    else{
-        return WRONG_DECODED;
-    }
-
-
 }
 
 
@@ -156,14 +57,28 @@ ISR(TIMER1_CAPT_vect){      // vector address: 0x0014
 
     uint16_t actual_timer1 = ICR1;
 
-    if(first_edge){
+    IR_signal_width = (actual_timer1 - last_timer1)/2;
+    pulse_t pulse = pulse_command(IR_signal_width);
 
-        first_edge = false;
-    }
-    else{
-
-        IR_signal_width = (actual_timer1 - last_timer1)/2;
-        IR_signals_values[IR_signals_counter++] = pulse_command(IR_signal_width);
+    switch (pulse) {
+        case PULSE_SHORT:
+            received_value = received_value >> 1;
+            received_bits++;
+            break;
+        case PULSE_LONG:
+            received_value = (received_value >> 1) | 0x80000000;
+            received_bits++;
+            break;
+        case PULSE_13MS:
+            received_value = 0;
+            received_bits = 0;
+            break;
+        case PULSE_ERROR:
+            received_bits = 0;
+            break;
+        default:
+            received_bits = 0;
+            break;
     }
     
     last_timer1 = actual_timer1;
