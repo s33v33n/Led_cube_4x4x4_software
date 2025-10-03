@@ -1,16 +1,10 @@
 #include <Arduino.h>
 #include <stdio.h>
 #include "IR_functions.h"
+#include "IR_variables.h"
 
-volatile uint16_t IR_signal_width = 0;
-volatile uint16_t last_timer1 = 0;
-
-volatile uint32_t received_bits = 0;
-volatile uint32_t received_value = 0;
 
 FILE uart_output = {0};         // clear the FILE struct at the beginning. This struct will be used for data stream
-
-void print_received_value_in_binary(uint32_t);
 
 void setup() {
     configure_timer1_for_IR_signal_measurement();
@@ -24,7 +18,6 @@ void setup() {
 
     printf("Hello from printf!\n");
     printf("Hello from printf one more time!\n");
-
 }
 
 void loop() {
@@ -42,6 +35,16 @@ void loop() {
 
         if(command == (uint8_t)(~neg_command)){
             printf("Correct command = !neg_command -> %u , %u\n" , command , neg_command);
+        }
+
+        switch(command){
+            case BUTTON_0: printf("BUTTON_0\n"); break;
+            case BUTTON_1: printf("BUTTON_1\n"); break;
+            case BUTTON_2: printf("BUTTON_2\n"); break;
+            case BUTTON_3: printf("BUTTON_3\n"); break;
+            case BUTTON_4: printf("BUTTON_4\n"); break;
+            case BUTTON_5: printf("BUTTON_5\n"); break;
+            default: printf("Nothing\n"); break;
         }
 	    received_bits = 0;
         
