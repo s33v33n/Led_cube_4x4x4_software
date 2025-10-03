@@ -21,7 +21,7 @@
 #define CLK_CUBE 7       // Digital pin 7 = Port D bit 7
 
 ///// REGISTER B /////
-#define SER_CUBE 0      // Digital pin 8 = Port B bit 0 
+#define SER_CUBE 1      // Digital pin 9 = Port B bit 1 
 #define RESET_CUBE 4    // Digital pin 12 = Port B bit 4  activates by low state 
 #define LATCH_CUBE 5    // Digital pin 13 = Port B bit 5
 
@@ -30,7 +30,7 @@
 // II) IR sensor 
 
 ///// REGISTER B /////
-#define IR_RECEIVER 5    // Digital pin 13 = Port B bit 5
+#define IR_RECEIVER 0    // Digital pin 8 = Port B bit 0
 
 
 

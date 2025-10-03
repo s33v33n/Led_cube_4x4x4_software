@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include "functions.h"
 #include "pins.h"
-#include "timers_setup.h"
+//#include "timers_setup.h"
 
 namespace effect0_scope { // Random turn on all columns
 
@@ -96,35 +96,35 @@ namespace effect3_scope { // turn on leds one by one
   }
 }
 
-namespace effect4_scope { // slow turning on layers 
+// namespace effect4_scope { // slow turning on layers 
 
-  void effect4(void){
+//   void effect4(void){
 
-    OCR2B = 0;      // D3  - LAYER_1
-    OCR0B = 64;     // D5  - LAYER_2
-    OCR0A = 128;    // D6  - LAYER_3
-    OCR2A = 192;    // D11 - LAYER_4
+//     OCR2B = 0;      // D3  - LAYER_1
+//     OCR0B = 64;     // D5  - LAYER_2
+//     OCR0A = 128;    // D6  - LAYER_3
+//     OCR2A = 192;    // D11 - LAYER_4
 
-    timer0_pwm_on();
-    timer2_pwm_on();
+//     timer0_pwm_on();
+//     timer2_pwm_on();
 
-    timer0_ISR_effect4_on();
-  }
-}
+//     timer0_ISR_effect4_on();
+//   }
+// }
 
-namespace effect5_scope { // slow turning on layers 
+// namespace effect5_scope { // slow turning on layers 
 
-  void effect5(void){
+//   void effect5(void){
 
-    OCR2B = 0;      // D3  - LAYER_1
-    OCR0B = 0;     // D5  - LAYER_2
-    OCR0A = 0;    // D6  - LAYER_3
-    OCR2A = 0;    // D11 - LAYER_4
+//     OCR2B = 0;      // D3  - LAYER_1
+//     OCR0B = 0;     // D5  - LAYER_2
+//     OCR0A = 0;    // D6  - LAYER_3
+//     OCR2A = 0;    // D11 - LAYER_4
 
-    timer0_pwm_on();
-    timer2_pwm_on();
+//     timer0_pwm_on();
+//     timer2_pwm_on();
 
-    timer2_ISR_effect5_on();
-  }
-}
+//     timer2_ISR_effect5_on();
+//   }
+// }
   
