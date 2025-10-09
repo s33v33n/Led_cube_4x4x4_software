@@ -6,6 +6,21 @@
 #define BUTTON_3 94
 #define BUTTON_4 8
 #define BUTTON_5 28
+#define BUTTON_6 90
+#define BUTTON_7 66
+#define BUTTON_8 82
+#define BUTTON_9 74
+#define BUTTON_PLAY 67
+#define BUTTON_VOL_ADD 64
+#define BUTTON_VOL_SUB 68
+#define BUTTON_CH_SUB 69
+#define BUTTON_CH_ADD 70
+#define BUTTON_CH 71
+#define BUTTON_SUB 7
+#define BUTTON_ADD 21
+#define BUTTON_EQ 9
+#define BUTTON_FOL_SUB 25
+#define BUTTON_FOL_ADD 13
 
 
 extern volatile uint16_t IR_signal_width;

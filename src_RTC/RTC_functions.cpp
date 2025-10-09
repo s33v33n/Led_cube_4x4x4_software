@@ -37,3 +37,76 @@ int uart_putchar(char c, FILE* f) { // ** get the chars and send them to printf 
     Serial.write(c);            // send the char     
     return 0;
 }
+
+uint8_t read_time(uint8_t command){
+
+    DDRD |= _BV(DAT);       // Data as output  
+    PORTD &= ~_BV(DAT);     // Set 0 to Data
+
+    PORTD &= ~_BV(CLK);     // CLK to 0
+    PORTB |= _BV(RST);      // set RST to 1 
+
+    uint8_t mask = 0x01;
+
+    for(int i=0; i < BYTE_LENGTH; i++){ // send command byte 
+
+        PORTD &= ~_BV(CLK);     // falling edge
+        if(command & mask){
+            PORTD |= _BV(DAT);
+        }
+        else{
+            PORTD &= ~_BV(DAT);
+        }
+        PORTD |= _BV(CLK);  // rising edge
+        
+        mask = mask << 1; 
+    }
+
+    uint8_t received_command = 0;
+
+    DDRD &= ~_BV(DAT);   // Data as input  
+    PORTD &= ~_BV(DAT);   // Disable pull-up resistor 
+
+    for(uint8_t received_bits=0; received_bits < BYTE_LENGTH; received_bits++){
+
+        PORTD &= ~_BV(CLK);     // falling edge
+        if(PIND & (1 << DAT)){
+            received_command |= (1 << received_bits);
+        }
+        PORTD |= _BV(CLK);  // rising edge 
+        //printf("received_command: %u\n", received_command);
+    }
+
+    PORTB &= ~_BV(RST);      // set RST to 0
+    PORTD &= ~_BV(CLK);      // set CLK to 0
+
+    return received_command;    // time in BCD 
+}
+
+void set_time(uint16_t command){
+
+    DDRD |= _BV(DAT);       // Data as output  
+    PORTD &= ~_BV(DAT);     // Set 0 to Data
+
+    PORTD &= ~_BV(CLK);     // CLK to 0
+    PORTB |= _BV(RST);      // set RST to 1 
+
+    uint8_t mask = 0x01;
+
+    for(int i=0; i < 16; i++){ // send command byte 
+
+        PORTD &= ~_BV(CLK);     // falling edge
+        if(command & mask){
+            PORTD |= _BV(DAT);
+        }
+        else{
+            PORTD &= ~_BV(DAT);
+        }
+        PORTD |= _BV(CLK);  // rising edge
+        
+        mask = mask << 1; 
+    }
+    
+    PORTB &= ~_BV(RST);      // set RST to 0
+    PORTD &= ~_BV(CLK);      // set CLK to 0
+}
