@@ -2,6 +2,16 @@
 #include "RTC_functions.h"
 #include "RTC_variables.h"
 
+int uart_putchar(char c, FILE* f) { // ** get the chars and send them to printf , FILE* f is useless function fdev_setup_streem needs it **
+    if (c == '\n') {
+        Serial.write('\r');     // return to the beginning of the line -> CR carrige return  
+    }                           // go to the next line -> LF line feed 
+                                // ** first computers were made just like a writing machines, needed to do carrige return + get new line **  
+    
+    Serial.write(c);            // send the char     
+    return 0;
+}
+
 void setup_RTC(){
 
     // PORT B
@@ -28,52 +38,87 @@ void setup_timer2_to_read_time_from_RTC(){
     TIMSK2 |= _BV(TOIE2);   // enable overflow interrupt 
 }
 
-int uart_putchar(char c, FILE* f) { // ** get the chars and send them to printf , FILE* f is useless function fdev_setup_streem needs it **
-    if (c == '\n') {
-        Serial.write('\r');     // return to the beginning of the line -> CR carrige return  
-    }                           // go to the next line -> LF line feed 
-                                // ** first computers were made just like a writing machines, needed to do carrige return + get new line **  
-    
-    Serial.write(c);            // send the char     
-    return 0;
+uint32_t read_time_from_DS1302(){
+
+    // READ hours 
+    uint8_t command = 0x85;             // 10000101 (to read hour from DS1302)
+    uint8_t hour = read_time(command);
+    //printf("hour: %u\n", hour);
+
+    // READ minutes
+    command = 0x83;             // 10000011 (to read minutes from DS1302)
+    uint8_t minutes = read_time(command);
+    //printf("minutes: %u\n", minutes);
+
+    // READ seconds
+    command = 0x81;             // 10000011 (to read seconds from DS1302)
+    uint8_t seconds = read_time(command);
+    //printf("minutes: %u\n", minutes);
+
+    return ((hour << 16) | (minutes << 8) | seconds);     // time in BCD HH:MM
 }
 
 uint8_t read_time(uint8_t command){
 
+    // prepare pins
     DDRD |= _BV(DAT);       // Data as output  
     PORTD &= ~_BV(DAT);     // Set 0 to Data
-
     PORTD &= ~_BV(CLK);     // CLK to 0
-    PORTB |= _BV(RST);      // set RST to 1 
 
-    uint8_t mask = 0x01;
+    // start communication 
+    PORTB |= _BV(RST);      // set RST to 1
+    
+    RST_to_CLK_time();
+
+    uint8_t mask = 0x01; 
 
     for(int i=0; i < BYTE_LENGTH; i++){ // send command byte 
 
-        PORTD &= ~_BV(CLK);     // falling edge
+        // select state (0 or 1)
         if(command & mask){
             PORTD |= _BV(DAT);
         }
         else{
             PORTD &= ~_BV(DAT);
         }
+
         PORTD |= _BV(CLK);  // rising edge
-        
+        state_time();
+
+        // if(i != BYTE_LENGTH - 1){ // first data out in on the first falling edge after last sent bit 
+
+        //     PORTD &= ~_BV(CLK);     // falling edge 
+        //     state_time();
+        // }
+
+            PORTD &= ~_BV(CLK);     // falling edge 
+            state_time();
+
         mask = mask << 1; 
     }
 
     uint8_t received_command = 0;
 
     DDRD &= ~_BV(DAT);   // Data as input  
-    PORTD &= ~_BV(DAT);   // Disable pull-up resistor 
+    //PORTD &= ~_BV(DAT);   // Disable pull-up resistor 
+    PORTD |= _BV(DAT);   // Enable pull-up resistor 
+
 
     for(uint8_t received_bits=0; received_bits < BYTE_LENGTH; received_bits++){
 
-        PORTD &= ~_BV(CLK);     // falling edge
+        PORTD |= _BV(CLK);  // rising edge 
+        state_time();
+        
+        
+
         if(PIND & (1 << DAT)){
             received_command |= (1 << received_bits);
         }
-        PORTD |= _BV(CLK);  // rising edge 
+
+
+        PORTD &= ~_BV(CLK);     // falling edge
+        state_time();
+        
         //printf("received_command: %u\n", received_command);
     }
 
@@ -83,30 +128,180 @@ uint8_t read_time(uint8_t command){
     return received_command;    // time in BCD 
 }
 
-void set_time(uint16_t command){
+void write_command(uint16_t command){
 
+    // prepare pins
     DDRD |= _BV(DAT);       // Data as output  
     PORTD &= ~_BV(DAT);     // Set 0 to Data
-
     PORTD &= ~_BV(CLK);     // CLK to 0
-    PORTB |= _BV(RST);      // set RST to 1 
 
-    uint8_t mask = 0x01;
+    // start communication 
+    PORTB |= _BV(RST);      // set RST to 1
+    
+    RST_to_CLK_time();
 
-    for(int i=0; i < 16; i++){ // send command byte 
+    uint16_t mask = 0x0001;
+    for(int i=0; i < BYTE_LENGTH; i++){ // send command byte 
 
-        PORTD &= ~_BV(CLK);     // falling edge
+        // select state (0 or 1)
         if(command & mask){
             PORTD |= _BV(DAT);
         }
         else{
             PORTD &= ~_BV(DAT);
         }
+
         PORTD |= _BV(CLK);  // rising edge
-        
+        state_time();
+
+        PORTD &= ~_BV(CLK);     // falling edge
+        state_time();
+
+        mask = mask << 1; 
+    }
+
+    for(int i=0; i < BYTE_LENGTH; i++){ // send command byte 
+
+        // select state (0 or 1)
+        if(command & mask){
+            PORTD |= _BV(DAT);
+        }
+        else{
+            PORTD &= ~_BV(DAT);
+        }
+
+        PORTD |= _BV(CLK);  // rising edge
+        state_time();
+
+        PORTD &= ~_BV(CLK);     // falling edge
+        state_time();
+
         mask = mask << 1; 
     }
     
     PORTB &= ~_BV(RST);      // set RST to 0
     PORTD &= ~_BV(CLK);      // set CLK to 0
+}
+
+
+// system clock period is 62,5 ns
+
+void state_time(void){ // wait 1125 ns 
+
+    for(int i=0; i < 18; i++){
+
+    }
+}
+
+void RST_to_CLK_time(void){ // wait 4187,5 ns 
+
+    for(int i=0; i < 67; i++){
+
+    }
+}
+
+void CLK_to_CE_time(void){ // wait 375 ns 
+
+    for(int i=0; i < 6; i++){
+
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+char *convert_time_BCD_to_string(uint16_t time){
+
+    char *time_in_string = (char*)malloc(5 * sizeof(char) + 1); 
+
+    for(int i=0; i < 4; i++){
+
+        uint16_t copy_time = (time >> 4*i) & 0x000F;
+        uint8_t mask = 0x01;
+        uint8_t digit = 0; 
+        for(int j=0; j < 4; j++){
+
+            if(copy_time & mask){
+                digit += 1 << j; 
+            }
+            mask = mask << 1;
+        }
+
+        if(i == 2 ){
+            time_in_string[i] = ':';    
+        }
+        else{
+            time_in_string[i] = digit + '0';    
+        }
+    }
+    time_in_string[5] = '\0'; 
+
+    return time_in_string;
 }

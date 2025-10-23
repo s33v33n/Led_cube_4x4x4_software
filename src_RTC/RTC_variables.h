@@ -10,3 +10,13 @@ extern volatile uint8_t isr_timer2_counter;
 extern volatile bool read_time_DS1302;
 
 extern uint8_t last_measure;
+
+
+
+
+enum read_commands{
+
+    READ_SECONDS,
+    READ_MINUTES,
+    READ_HOURS
+};
