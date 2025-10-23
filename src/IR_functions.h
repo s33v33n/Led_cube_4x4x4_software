@@ -19,4 +19,3 @@ typedef enum{
 
 pulse_t pulse_command(uint16_t);
 
-int uart_putchar(char, FILE*);
