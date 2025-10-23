@@ -2,6 +2,17 @@
 #include "pins.h"
 
 
+// Serial to printf
+int uart_putchar(char c, FILE* f) { // ** get the chars and send them to printf , FILE* f is useless function fdev_setup_streem needs it **
+    if (c == '\n') {
+        Serial.write('\r');     // return to the beginning of the line -> CR carrige return  
+    }                           // go to the next line -> LF line feed 
+                                // ** first computers were made just like a writing machines, needed to do carrige return + get new line **  
+    
+    Serial.write(c);            // send the char     
+    return 0;
+}
+
 void led_cube_pins_setup(void){
 
   //PORT D

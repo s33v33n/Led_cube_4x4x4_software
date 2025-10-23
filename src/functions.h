@@ -2,6 +2,8 @@
 
 #include <Arduino.h>
 
+int uart_putchar(char, FILE*);
+
 void led_cube_pins_setup(void);
 void initial_effect(void);
 
