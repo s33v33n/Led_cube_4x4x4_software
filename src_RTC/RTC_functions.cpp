@@ -41,21 +41,21 @@ void setup_timer2_to_read_time_from_RTC(){
 uint32_t read_time_from_DS1302(){
 
     // READ hours 
-    uint8_t command = 0x85;             // 10000101 (to read hour from DS1302)
+    uint8_t command = 0x85;                 // 10000101 (to read hour from DS1302)
     uint8_t hour = read_time(command);
     //printf("hour: %u\n", hour);
 
     // READ minutes
-    command = 0x83;             // 10000011 (to read minutes from DS1302)
+    command = 0x83;                         // 10000011 (to read minutes from DS1302)
     uint8_t minutes = read_time(command);
     //printf("minutes: %u\n", minutes);
 
     // READ seconds
-    command = 0x81;             // 10000011 (to read seconds from DS1302)
+    command = 0x81;                         // 10000011 (to read seconds from DS1302)
     uint8_t seconds = read_time(command);
     //printf("minutes: %u\n", minutes);
 
-    return ((hour << 16) | (minutes << 8) | seconds);     // time in BCD HH:MM
+    return ((hour << 16) | (minutes << 8) | seconds);     // time in BCD HH:MM:SS
 }
 
 uint8_t read_time(uint8_t command){
@@ -85,41 +85,26 @@ uint8_t read_time(uint8_t command){
         PORTD |= _BV(CLK);  // rising edge
         state_time();
 
-        // if(i != BYTE_LENGTH - 1){ // first data out in on the first falling edge after last sent bit 
-
-        //     PORTD &= ~_BV(CLK);     // falling edge 
-        //     state_time();
-        // }
-
-            PORTD &= ~_BV(CLK);     // falling edge 
-            state_time();
+        PORTD &= ~_BV(CLK);     // falling edge (if i=7 first data out is available)
+        state_time();
 
         mask = mask << 1; 
     }
-
-    uint8_t received_command = 0;
-
-    DDRD &= ~_BV(DAT);   // Data as input  
-    //PORTD &= ~_BV(DAT);   // Disable pull-up resistor 
+    DDRD &= ~_BV(DAT);   // Data as input   
     PORTD |= _BV(DAT);   // Enable pull-up resistor 
 
-
+    uint8_t received_command = 0;
     for(uint8_t received_bits=0; received_bits < BYTE_LENGTH; received_bits++){
 
         PORTD |= _BV(CLK);  // rising edge 
         state_time();
         
-        
-
         if(PIND & (1 << DAT)){
             received_command |= (1 << received_bits);
         }
 
-
         PORTD &= ~_BV(CLK);     // falling edge
         state_time();
-        
-        //printf("received_command: %u\n", received_command);
     }
 
     PORTB &= ~_BV(RST);      // set RST to 0
@@ -185,123 +170,20 @@ void write_command(uint16_t command){
 
 
 // system clock period is 62,5 ns
-
 void state_time(void){ // wait 1125 ns 
 
-    for(int i=0; i < 18; i++){
-
-    }
+    for(int i=0; i < 18; i++){ }
 }
 
 void RST_to_CLK_time(void){ // wait 4187,5 ns 
 
-    for(int i=0; i < 67; i++){
-
-    }
+    for(int i=0; i < 67; i++){ }
 }
 
 void CLK_to_CE_time(void){ // wait 375 ns 
 
-    for(int i=0; i < 6; i++){
-
-    }
+    for(int i=0; i < 6; i++){ }
 }
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-char *convert_time_BCD_to_string(uint16_t time){
-
-    char *time_in_string = (char*)malloc(5 * sizeof(char) + 1); 
-
-    for(int i=0; i < 4; i++){
-
-        uint16_t copy_time = (time >> 4*i) & 0x000F;
-        uint8_t mask = 0x01;
-        uint8_t digit = 0; 
-        for(int j=0; j < 4; j++){
-
-            if(copy_time & mask){
-                digit += 1 << j; 
-            }
-            mask = mask << 1;
-        }
-
-        if(i == 2 ){
-            time_in_string[i] = ':';    
-        }
-        else{
-            time_in_string[i] = digit + '0';    
-        }
-    }
-    time_in_string[5] = '\0'; 
-
-    return time_in_string;
-}

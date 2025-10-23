@@ -67,7 +67,7 @@ void loop(){
     if(read_time_DS1302){
         uint32_t read_time = read_time_from_DS1302();       // time in BCD
 
-        printf("Final time in BCD (HH:MM:SS) : ");
+        printf("Final time in BCD (HH:MM:SS):  ");
         uint32_t mask = 0x800000;
         for(int i=0; i < 24; i++){
             
