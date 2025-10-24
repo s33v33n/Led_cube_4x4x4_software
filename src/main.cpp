@@ -4,9 +4,8 @@
 #include "pins.h"
 #include "functions.h"
 #include "IR_functions.h"
-#include "IR_variables.h"
 #include "RTC_functions.h"
-#include "RTC_variables.h"
+#include "variables.h"
 
 
 enum Effect{

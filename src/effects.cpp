@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include "functions.h"
 #include "pins.h"
-//#include "timers_setup.h"
+#include "variables.h"
 
 namespace effect0_scope { // Random turn on all columns
 

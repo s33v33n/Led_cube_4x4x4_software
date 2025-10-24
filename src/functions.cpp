@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include "pins.h"
+#include "variables.h"
 
 
 // Serial to printf

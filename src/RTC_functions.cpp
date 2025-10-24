@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include "RTC_functions.h"
-#include "RTC_variables.h"
+#include "variables.h"
+#include "pins.h"
 
 
 void setup_RTC(){

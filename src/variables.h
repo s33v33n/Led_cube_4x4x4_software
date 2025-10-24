@@ -1,5 +1,15 @@
 #include <Arduino.h>
 
+#define BYTE_LENGTH 8
+
+
+// VARIABLES for LED_CUBE
+extern uint8_t Columns; // count from 0 --> 0-15 (16)
+extern uint8_t Layers;// count from 0 --> 0-3 (4)
+
+
+
+// IR_variables 
 #define BUTTON_0 22
 #define BUTTON_1 12
 #define BUTTON_2 24
@@ -28,3 +38,10 @@ extern volatile uint16_t last_timer1;
 
 extern volatile uint32_t received_bits;
 extern volatile uint32_t received_value;
+
+
+
+
+// RTC_variables
+extern volatile uint8_t isr_timer2_counter;
+extern volatile bool read_time_DS1302;
