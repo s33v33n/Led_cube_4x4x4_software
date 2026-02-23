@@ -96,7 +96,7 @@ namespace writing_cols_states{
   bool columns_states[16] = {0};
 
   void write_selected_cols_states(uint8_t *random_array, uint8_t states, bool random){
-
+    
     if(random){
       for(int i=0; i < states; i++){
         columns_states[random_array[i]] = true;
@@ -219,16 +219,41 @@ void fountian(uint8_t *random_array, uint8_t states, uint8_t layer){
   write_next_layer(layer);
 }
 
+
+void write_selected_layers(uint8_t states){
+
+  all_layers_low();
+  
+  if(states & 0x01){
+    PORTD |= _BV(LAYER_1);
+  }
+  if(states & 0x02){
+    PORTD |= _BV(LAYER_2);
+  }
+  if(states & 0x04){
+    PORTD |= _BV(LAYER_3);
+  }
+  if(states & 0x08){
+    PORTB |= _BV(LAYER_4);
+  }
+
+}
+
 void print_time_in_BCD_on_Led_Cube(uint32_t time_HH_MM_SS){
 
-  all_layers_high();
-  bool random_flag = true;
-
-
+  uint16_t time_HH_MM = (time_HH_MM_SS >> 8);
+  
   for(uint8_t i = 0; i < COLUMNS; i++){
+
+    // 1. Light one selected Column 
     columns_turn_off();
-    writing_cols_states::write_selected_cols_states(const_cast<uint8_t*>(Column_to_light[i]), STATES, random_flag);
+    writing_cols_states::write_selected_cols_states(const_cast<uint8_t*>(Column_to_light[i]), STATES, true);
     
+    // 2. Light selected layers 
+    uint8_t layers_to_write = (time_HH_MM >> 4*i);
+    write_selected_layers(layers_to_write);
 
   }
 }
+
+

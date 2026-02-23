@@ -56,8 +56,9 @@ delay(500);
 
 for(uint8_t i = 0; i < 4; i++){
   write_next_layer(i);
-  delay(750);
+  delay(500);
 }
+all_layers_low();
 //========
 
 
@@ -72,6 +73,8 @@ setup_RTC();
 setup_timer2_to_read_time_from_RTC();
 RTC_setup_starting_values();
 //========
+
+
 
 
 }
@@ -92,24 +95,26 @@ void handleCODE(){
 
     if(command == (uint8_t)(~neg_command)){
       printf("Correct command = !neg_command -> %u , %u\n" , command , neg_command);
-    }
-
-    switch(command){
-      case BUTTON_0: printf("BUTTON_0\n"); all_layers_low(); current_effect = None; TIMSK2 &= ~_BV(TOIE2); break;
-      case BUTTON_1: current_effect = Effect_0; TIMSK2 &= ~_BV(TOIE2); break;
-      case BUTTON_2: current_effect = Effect_1; TIMSK2 &= ~_BV(TOIE2); break;
-      case BUTTON_3: current_effect = Effect_2; TIMSK2 &= ~_BV(TOIE2); break;
-      case BUTTON_4: current_effect = Effect_3; TIMSK2 &= ~_BV(TOIE2); break;
-      case BUTTON_5: current_effect = None; all_layers_low(); TIMSK2 |= _BV(TOIE2); break;
-      default: printf("Nothing\n"); TIMSK2 &= ~_BV(TOIE2); break;
-    }
-
-    received_bits = 0;
     
+
+      switch(command){
+        case BUTTON_0: printf("BUTTON_0\n"); all_layers_low(); current_effect = None; TIMSK2 &= ~_BV(TOIE2); break;
+        case BUTTON_1: current_effect = Effect_0; TIMSK2 &= ~_BV(TOIE2); break;
+        case BUTTON_2: current_effect = Effect_1; TIMSK2 &= ~_BV(TOIE2); break;
+        case BUTTON_3: current_effect = Effect_2; TIMSK2 &= ~_BV(TOIE2); break;
+        case BUTTON_4: current_effect = Effect_3; TIMSK2 &= ~_BV(TOIE2); break;
+        case BUTTON_5: current_effect = None; all_layers_low(); TIMSK2 |= _BV(TOIE2); break;
+        default: printf("Nothing\n"); TIMSK2 &= ~_BV(TOIE2); break;
+      }
+
+      received_bits = 0;
+    
+      printf("command: %u \n" , command);
+    }
+
     // 3. enable interrupts 
     TIMSK1 |= _BV(ICIE1);
-
-    printf("command: %u \n" , command);
+  
   }
 }
 
@@ -135,7 +140,7 @@ void loop(){
   if(read_time_DS1302){
     uint32_t read_time = read_time_from_DS1302();       // time in BCD
     print_time_in_BCD(read_time);
-    
+
     read_time_DS1302 = false;
   }
 
