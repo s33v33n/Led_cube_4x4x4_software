@@ -1,6 +1,6 @@
 #include <Arduino.h>
-#include "pins.h"
-#include "IR_functions.h"
+#include <pins.h>
+#include <IR_functions.h>
 
 void configure_timer1_for_IR_signal_measurement(void){
 

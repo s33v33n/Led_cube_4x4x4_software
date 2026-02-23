@@ -18,3 +18,8 @@ namespace effect3_scope {   // EFFECT 3 - turn on leds one by one
   
     void effect3(void);
 }
+
+namespace effect4_scope {   // EFFECT 3 - turn on leds one by one  
+  
+    void effect4(void);
+}

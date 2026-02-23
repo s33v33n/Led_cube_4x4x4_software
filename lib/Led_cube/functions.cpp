@@ -1,6 +1,6 @@
 #include <Arduino.h>
-#include "pins.h"
-#include "variables.h"
+#include <pins.h>
+#include <variables.h>
 
 
 // Serial to printf
@@ -241,18 +241,24 @@ void write_selected_layers(uint8_t states){
 
 void print_time_in_BCD_on_Led_Cube(uint32_t time_HH_MM_SS){
 
-  uint16_t time_HH_MM = (time_HH_MM_SS >> 8);
-  
-  for(uint8_t i = 0; i < COLUMNS; i++){
+  uint16_t time_HH_MM = time_HH_MM_SS;
+  all_layers_high();
+  uint8_t Cols[4] = {7,0,15,8};
+  uint8_t *Column_pointer = Cols;
+
+  //writing_cols_states::write_selected_cols_states(Cols, 4, true);
+
+  for(uint8_t i = 0; i < 4; i++){
 
     // 1. Light one selected Column 
-    columns_turn_off();
-    writing_cols_states::write_selected_cols_states(const_cast<uint8_t*>(Column_to_light[i]), STATES, true);
-    
+    writing_cols_states::write_selected_cols_states(Column_pointer, 1, true);
+
     // 2. Light selected layers 
     uint8_t layers_to_write = (time_HH_MM >> 4*i);
     write_selected_layers(layers_to_write);
 
+    Column_pointer++;
+    delay(2);
   }
 }
 

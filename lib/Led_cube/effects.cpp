@@ -1,7 +1,8 @@
 #include <Arduino.h>
-#include "functions.h"
-#include "pins.h"
-#include "variables.h"
+#include <functions.h>
+#include <pins.h>
+#include <variables.h>
+#include "RTC_functions.h"
 
 namespace effect0_scope { // Random turn on all columns
 
@@ -20,7 +21,6 @@ namespace effect0_scope { // Random turn on all columns
 
     writing_cols_states::write_selected_cols_states(random_numbers, columns_turn_on, random_flag);
     columns_turn_on++;
-    Serial.println("Number " + String(columns_turn_on) + ":" + String(random_numbers[columns_turn_on]));
   }
 }
 
@@ -91,13 +91,19 @@ namespace effect3_scope { // turn on leds one by one
     }
     
     turn_one_led(random_numbers[passed_drops]);
-    
-    //Serial.println("Passed drops: " + String(random_numbers[passed_drops]));
   }
 }
 
 
 namespace effect4_scope{
+
+  void effect4(void){
+
+    uint32_t read_time = read_time_from_DS1302();       // time in BCD
+    print_time_in_BCD(read_time);
+
+    print_time_in_BCD_on_Led_Cube(read_time);
+  }
 
 }
 
