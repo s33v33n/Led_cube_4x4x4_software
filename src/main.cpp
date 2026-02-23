@@ -1,11 +1,12 @@
 #include <Arduino.h>
 #include <stdio.h>
+
 #include "effects.h"
-#include "pins.h"
 #include "functions.h"
 #include "IR_functions.h"
 #include "RTC_functions.h"
 #include "variables.h"
+#include "pins.h"
 
 
 enum Effect{
@@ -134,6 +135,7 @@ void loop(){
   if(read_time_DS1302){
     uint32_t read_time = read_time_from_DS1302();       // time in BCD
     print_time_in_BCD(read_time);
+    
     read_time_DS1302 = false;
   }
 
@@ -174,7 +176,7 @@ ISR(TIMER1_CAPT_vect){      // vector address: 0x0014
 
 ISR(TIMER2_OVF_vect){ // overflow event = 0.016384
 
-  if(isr_timer2_counter == 62){  // read time every ~ 4 sec (255)
+  if(isr_timer2_counter == 62){  // read time every ~ 4 sec set - 255; read time every 1 sec - set 62 
     read_time_DS1302 = true;
     isr_timer2_counter = 0;
   }

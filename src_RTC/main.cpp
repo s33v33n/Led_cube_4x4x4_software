@@ -22,8 +22,8 @@ void setup(){
 void loop(){
 
     if(read_time_DS1302){
-        uint32_t read_time = read_time_from_DS1302();       // time in BCD
-        print_time_in_BCD(read_time);
+        uint32_t read_time_in_BCD = read_time_from_DS1302();       // time in BCD
+        print_time_in_BCD(read_time_in_BCD);
         read_time_DS1302 = false;
     }
 }

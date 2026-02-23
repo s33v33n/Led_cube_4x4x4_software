@@ -96,3 +96,11 @@ namespace effect3_scope { // turn on leds one by one
   }
 }
 
+
+namespace effect4_scope{
+
+  
+
+
+}
+

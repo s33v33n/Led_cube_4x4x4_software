@@ -1,6 +1,8 @@
 #include <Arduino.h>
 
 #define BYTE_LENGTH 8
+#define COLUMNS 4
+#define STATES 16 
 
 
 // VARIABLES for LED_CUBE
@@ -40,8 +42,17 @@ extern volatile uint32_t received_bits;
 extern volatile uint32_t received_value;
 
 
-
-
 // RTC_variables
 extern volatile uint8_t isr_timer2_counter;
 extern volatile bool read_time_DS1302;
+
+
+// Printing time in BCD on Led Cube 
+
+// light one selected Column
+constexpr uint8_t Column_to_light[4][16] = {
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, 
+    {0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0}, 
+    {0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0}, 
+    {0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0}  
+};

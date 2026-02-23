@@ -88,6 +88,8 @@ uint32_t read_time_from_DS1302(){
     return ((uint32_t)hour << 16) | ((uint32_t)minutes << 8) | seconds;     // time in BCD HH:MM:SS
 }
 
+
+
 uint8_t read_time(uint8_t command){
 
     // prepare pins

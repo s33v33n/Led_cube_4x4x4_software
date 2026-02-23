@@ -1,8 +1,6 @@
 
 HOW fdev_setup_stream works:
 
-
-
 printf("Hello\n")                   (standart output stream)
       │
       ▼

@@ -218,3 +218,17 @@ void fountian(uint8_t *random_array, uint8_t states, uint8_t layer){
   writing_cols_states::write_selected_cols_states(random_array, states, true);
   write_next_layer(layer);
 }
+
+void print_time_in_BCD_on_Led_Cube(uint32_t time_HH_MM_SS){
+
+  all_layers_high();
+  bool random_flag = true;
+
+
+  for(uint8_t i = 0; i < COLUMNS; i++){
+    columns_turn_off();
+    writing_cols_states::write_selected_cols_states(const_cast<uint8_t*>(Column_to_light[i]), STATES, random_flag);
+    
+
+  }
+}
