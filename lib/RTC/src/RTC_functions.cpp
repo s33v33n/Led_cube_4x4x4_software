@@ -228,6 +228,3 @@ void CLK_to_CE_time(void){ // wait 375 ns   (actual not used)
 
     for(int i=0; i < 6; i++){ }
 }
-
-
-

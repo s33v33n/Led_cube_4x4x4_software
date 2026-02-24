@@ -19,3 +19,4 @@ typedef enum{
 
 pulse_t pulse_command(uint16_t);
 
+void handleCODE(void);

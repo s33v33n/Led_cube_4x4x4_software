@@ -1,14 +1,16 @@
 #include <Arduino.h>
 
 #define BYTE_LENGTH 8
-#define COLUMNS 4
+#define COLUMNS 16
 #define STATES 16 
 
-
-// VARIABLES for LED_CUBE
-extern uint8_t Columns; // count from 0 --> 0-15 (16)
-extern uint8_t Layers;// count from 0 --> 0-3 (4)
-
+// Time intervals for effects 
+#define NO_TASK 0
+#define TASK_0_INTERVAL 1000
+#define TASK_1_INTERVAL 250
+#define TASK_2_INTERVAL 250
+#define TASK_3_INTERVAL 2000
+#define TASK_4_INTERVAL 0
 
 
 // IR_variables 
@@ -35,6 +37,11 @@ extern uint8_t Layers;// count from 0 --> 0-3 (4)
 #define BUTTON_FOL_ADD 13
 
 
+// VARIABLES for LED_CUBE
+extern uint8_t Columns; // count from 0 --> 0-15 (16)
+extern uint8_t Layers;// count from 0 --> 0-3 (4)
+
+// IR
 extern volatile uint16_t IR_signal_width;
 extern volatile uint16_t last_timer1;
 
@@ -46,3 +53,7 @@ extern volatile uint32_t received_value;
 extern volatile uint8_t isr_timer2_counter;
 extern volatile bool read_time_DS1302;
 
+
+// Tasks management
+
+extern uint32_t last_time;

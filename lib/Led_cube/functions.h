@@ -34,4 +34,6 @@ void fountian(uint8_t*, uint8_t, uint8_t);
 
 void print_time_in_BCD_on_Led_Cube(uint32_t); 
 
+void myDelay(uint32_t);
+
 void write_selected_layers(uint8_t);

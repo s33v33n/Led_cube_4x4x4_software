@@ -1,3 +1,23 @@
+enum Effect{
+
+  None,
+  Effect_0,
+  Effect_1,
+  Effect_2,
+  Effect_3,
+  Effect_4,
+};
+extern Effect current_effect;
+
+
+struct Task
+{
+  uint16_t interval;
+  void (*function)();
+};
+extern Task tasks[];
+
+
 
 namespace effect0_scope {   // EFFECT 1 - random turn on all columns 
 

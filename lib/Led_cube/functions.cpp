@@ -1,6 +1,8 @@
 #include <Arduino.h>
 #include <pins.h>
 #include <variables.h>
+#include <functions.h>
+#include <RTC_functions.h>
 
 
 // Serial to printf
@@ -48,21 +50,6 @@ void columns_turn_off(void){
 }
 
 
-void initial_effect(void){
-  columns_turn_on(); 
-  delay(500);
-  columns_turn_off();
-  delay(500);
-  columns_turn_on();
-  delay(500);
-  columns_turn_off();
-  delay(500);
-  columns_turn_on();
-  delay(500);
-  columns_turn_off();
-}
-
-  
 namespace random_numbers_generator {
 
   uint8_t numbers_array[16] = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
@@ -176,11 +163,18 @@ void write_next_layer(uint8_t next){
     }
 }
 
-// void turn_on_one_column(uint8_t col){
-    
-  
+void initial_effect(void){
+  all_layers_low();
+  columns_turn_on();
+  delay(500);
 
-// }
+  for(uint8_t i = 0; i < 4; i++){
+    write_next_layer(i);
+    delay(250);
+  }
+  all_layers_low();
+}
+
 
 void turn_one_led (uint8_t column){
 
@@ -239,14 +233,19 @@ void write_selected_layers(uint8_t states){
 
 }
 
+void myDelay(uint32_t time_in_us) {
+    uint32_t start = micros(); 
+
+  while (micros() - start < time_in_us) {
+    // do nothing
+  }
+}
 void print_time_in_BCD_on_Led_Cube(uint32_t time_HH_MM_SS){
 
   uint16_t time_HH_MM = time_HH_MM_SS;
   all_layers_high();
   uint8_t Cols[4] = {7,0,15,8};
   uint8_t *Column_pointer = Cols;
-
-  //writing_cols_states::write_selected_cols_states(Cols, 4, true);
 
   for(uint8_t i = 0; i < 4; i++){
 
@@ -258,7 +257,7 @@ void print_time_in_BCD_on_Led_Cube(uint32_t time_HH_MM_SS){
     write_selected_layers(layers_to_write);
 
     Column_pointer++;
-    delay(2);
+    myDelay(2000);
   }
 }
 
